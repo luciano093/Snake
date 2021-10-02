@@ -31,8 +31,7 @@ int main(int argv, char* argc[]) {
 	SDL_Event event;
 	bool running = true;
 
-	int ctr = 0;
-	int max = 200000;
+	int delay = 100;
 	unsigned lastTime = 0, currentTime;
 
 	while (running) {
@@ -64,10 +63,10 @@ int main(int argv, char* argc[]) {
 					// this may trigger autosnake (maybe)
 					break;
 				case SDLK_EQUALS:
-					max -= 10000;
+					delay -= 10;
 					break;
 				case SDLK_MINUS:
-					max += 10000;
+					delay += 10;
 					break;
 				}
 			default:
@@ -75,9 +74,8 @@ int main(int argv, char* argc[]) {
 			} 
 		}
 
-		if (++ctr >= max) {
-			
-			ctr = 0;
+		currentTime = SDL_GetTicks();
+		if (currentTime > lastTime + delay) {
 
 			window.clear();
 			window.presentGrid();
@@ -106,11 +104,10 @@ int main(int argv, char* argc[]) {
 
 			window.present();
 
-			currentTime = SDL_GetTicks();
-			if (currentTime > lastTime + 1000) {
+			
 				std::cout << "ticks: " << currentTime - lastTime << std::endl;
 				lastTime = currentTime;
-			}
+			
 		}
 	}
 
