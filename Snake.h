@@ -31,7 +31,7 @@ public:
 	inline void goDown();
 
 	inline Directions getDirection() { return direction; }
-	inline int getSize() { return squares.size(); }
+	inline size_t getSize() { return squares.size(); }
 	inline Square* getHead() { return &squares[0]; }
 
 	void move();

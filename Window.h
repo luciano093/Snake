@@ -47,7 +47,7 @@ Window::Window(const char* title, int width, int height) : w(width), h(height) {
 	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_HIDDEN);
 	if (!window) std::cerr << "Failed to create SDL_Window!" << SDL_GetError() << std::endl;
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, 0);
 	if(!renderer) std::cerr << "Failed to create SDL_Renderer!" << SDL_GetError() << std::endl;
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

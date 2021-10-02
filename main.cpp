@@ -11,10 +11,12 @@ void giveAppleRandPos(Window& window, Snake& snake, Square& apple);
 inline bool checkSnakeAppleCollision(Snake& snake, Square& apple);
 bool checkSnakeTailCollision(Snake& snake);
 
-inline bool checkUpCollision(Snake& snake, Window& window, Square& s);
-inline bool checkDownCollision(Snake& snake, Window& window, Square& s);
-inline bool checkLeftCollision(Snake& snake, Window& window, Square& s);
-inline bool checkRightCollision(Snake& snake, Window& window, Square& s);
+inline bool checkUpCollision(Snake& snake, Square& s);
+inline bool checkDownCollision(Snake& snake, Square& s);
+inline bool checkLeftCollision(Snake& snake, Square& s);
+inline bool checkRightCollision(Snake& snake, Square& s);
+
+void autoSnake(Snake& snake, Square& apple);
 
 int main(int argv, char* argc[]) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) std::cerr << "SDL_Init has failed to initialize! " << SDL_GetError() << std::endl;
@@ -26,12 +28,11 @@ int main(int argv, char* argc[]) {
 	Snake snake(window.getRenderer(), 200, 200, window.getGridSize(), window.getGridSize());
 	Square apple(window.getRenderer(), 250, 250, window.getGridSize(), window.getGridSize(), 255, 0, 0);
 
-	const Uint8* keySate = SDL_GetKeyboardState(nullptr);
 	SDL_Event event;
 	bool running = true;
 
 	uint8_t ctr = 0;
-	int max = 9;
+	int max = 120;
 
 	while (running) {
 		while(SDL_PollEvent(&event)){
@@ -61,10 +62,10 @@ int main(int argv, char* argc[]) {
 					// nothing happens :(
 					break;
 				case SDLK_EQUALS:
-					++max;
+					max -= 10;
 					break;
 				case SDLK_MINUS:
-					--max;
+					max += 10;
 					break;
 				}
 			default:
@@ -72,49 +73,11 @@ int main(int argv, char* argc[]) {
 			} 
 		}
 
+
 		window.clear();
 		window.presentGrid();
 
-		if (!checkSnakeAppleCollision(snake, apple)) {
-			if (snake.getX() < apple.getX()) snake.goRight();
-			else if (snake.getX() > apple.getX()) snake.goLeft();
-			if (snake.getY() < apple.getY()) snake.goDown();
-			else if (snake.getY() > apple.getY()) snake.goUp();
-
-			Square* head = snake.getHead();
-
-			for (Square& s : snake.getSquares()) {
-				if (&s == head) continue;
-
-				switch (snake.getDirection()) {
-				case Directions::UP:
-					if (checkUpCollision(snake, window, s)) {
-						if (checkLeftCollision(snake, window, s)) snake.goRight();
-						else if (checkRightCollision(snake, window, s)) snake.goLeft();
-					}
-					break;
-				case Directions::DOWN:
-					if (checkDownCollision(snake, window, s)) {
-						if (checkLeftCollision(snake, window, s)) snake.goRight();
-						else if (checkRightCollision(snake, window, s)) snake.goLeft();
-					}
-					break;
-				case Directions::LEFT:
-					if (checkLeftCollision(snake, window, s)) {
-						if (checkUpCollision(snake, window, s)) snake.goDown();
-						else if (checkDownCollision(snake, window, s)) snake.goUp();
-					}
-					break;
-				case Directions::RIGHT:
-					if (checkRightCollision(snake, window, s)) {
-						if (checkUpCollision(snake, window, s)) snake.goDown();
-						else if (checkDownCollision(snake, window, s)) snake.goUp();
-					}
-					break;
-				}
-
-			}
-		}
+		autoSnake(snake, apple);
 		
 		if (++ctr >= max) {
 			ctr = 0;
@@ -191,18 +154,22 @@ bool checkSnakeTailCollision(Snake& snake) {
 	return false;
 }
 
-inline bool checkUpCollision(Snake& snake, Window& window, Square& s) {
-	return snake.getX() == s.getX() && snake.getY() - window.getGridSize() == s.getY();
+inline bool checkUpCollision(Snake& snake, Square& s) {
+	return snake.getX() == s.getX() && snake.getY() - snake.getHeight() == s.getY();
 }
 
-inline bool checkDownCollision(Snake& snake, Window& window, Square& s) {
-	return snake.getX() == s.getX() && snake.getY() + window.getGridSize() == s.getY();
+inline bool checkDownCollision(Snake& snake, Square& s) {
+	return snake.getX() == s.getX() && snake.getY() + snake.getHeight() == s.getY();
 }
 
-inline bool checkLeftCollision(Snake& snake, Window& window, Square& s) {
-	return snake.getX() - window.getGridSize() == s.getX() && snake.getY() == s.getY();
+inline bool checkLeftCollision(Snake& snake, Square& s) {
+	return snake.getX() - snake.getWidth() == s.getX() && snake.getY() == s.getY();
 }
 
-inline bool checkRightCollision(Snake& snake, Window& window, Square& s) {
-	return snake.getX() + window.getGridSize() == s.getX() && snake.getY() == s.getY();
+inline bool checkRightCollision(Snake& snake, Square& s) {
+	return snake.getX() + snake.getWidth() == s.getX() && snake.getY() == s.getY();
+}
+
+void autoSnake(Snake& snake, Square& apple) {
+
 }
