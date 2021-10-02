@@ -5,10 +5,10 @@
 #include<vector>
 #include"Square.h"
 
-enum class Directions { UP, DOWN, LEFT, RIGHT, NONE };
-
 class Snake {
 public:
+	enum class Directions { UP, DOWN, LEFT, RIGHT, NONE };
+
 	Snake(SDL_Renderer* renderer, int x, int y, int width, int height);
 
 	inline std::vector<SDL_Texture*> getTextures();

@@ -31,8 +31,9 @@ int main(int argv, char* argc[]) {
 	SDL_Event event;
 	bool running = true;
 
-	uint8_t ctr = 0;
-	int max = 120;
+	int ctr = 0;
+	int max = 200000;
+	unsigned lastTime = 0, currentTime;
 
 	while (running) {
 		while(SDL_PollEvent(&event)){
@@ -44,28 +45,29 @@ int main(int argv, char* argc[]) {
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym) {
 				case SDLK_LEFT:
-					if (snake.getSize() == 1 || snake.getDirection() != Directions::RIGHT) snake.goLeft();
+					if (snake.getSize() == 1 || snake.getDirection() != Snake::Directions::RIGHT) snake.goLeft();
 					break;
 				case SDLK_RIGHT:
-					if(snake.getSize() == 1 || snake.getDirection() != Directions::LEFT) snake.goRight();
+					if(snake.getSize() == 1 || snake.getDirection() != Snake::Directions::LEFT) snake.goRight();
 					break;
 				case SDLK_UP:
-					if (snake.getSize() == 1 || snake.getDirection() != Directions::DOWN) snake.goUp();
+					if (snake.getSize() == 1 || snake.getDirection() != Snake::Directions::DOWN) snake.goUp();
 					break;
 				case SDLK_DOWN:
-					if (snake.getSize() == 1 || snake.getDirection() != Directions::UP) snake.goDown();
+					if (snake.getSize() == 1 || snake.getDirection() != Snake::Directions::UP) snake.goDown();
 					break;
 				case SDLK_SPACE:
 					snake.grow();
 					break;
 				case SDLK_LSHIFT:
 					// nothing happens :(
+					// this may trigger autosnake (maybe)
 					break;
 				case SDLK_EQUALS:
-					max -= 10;
+					max -= 10000;
 					break;
 				case SDLK_MINUS:
-					max += 10;
+					max += 10000;
 					break;
 				}
 			default:
@@ -73,36 +75,43 @@ int main(int argv, char* argc[]) {
 			} 
 		}
 
-
-		window.clear();
-		window.presentGrid();
-
-		autoSnake(snake, apple);
-		
 		if (++ctr >= max) {
+			
 			ctr = 0;
-			snake.move();
-		}
 
-		// When snake goes out of screen
-		handleOutOfScreen(window, snake);
+			window.clear();
+			window.presentGrid();
+
+			autoSnake(snake, apple);
 		
-		// when snake collides with apple
-		if (checkSnakeAppleCollision(snake, apple)) {
-			snake.grow();
-			giveAppleRandPos(window, snake, apple);
+			snake.move();
+		
+			// When snake goes out of screen
+			handleOutOfScreen(window, snake);
+		
+			// when snake collides with apple
+			if (checkSnakeAppleCollision(snake, apple)) {
+				snake.grow();
+				giveAppleRandPos(window, snake, apple);
+			}
+
+			// collision with tail
+			if (snake.getSize() > 3 && checkSnakeTailCollision(snake)) {
+				 // Code to kill
+				std::cout << "Colision" << std::endl;
+			}
+
+			window.updateTextures(snake.getTextures(), snake.getRects());
+			window.updateTexture(apple.getTexture(), apple.getRect());
+
+			window.present();
+
+			currentTime = SDL_GetTicks();
+			if (currentTime > lastTime + 1000) {
+				std::cout << "ticks: " << currentTime - lastTime << std::endl;
+				lastTime = currentTime;
+			}
 		}
-
-		// collision with tail
-		if (snake.getSize() > 3 && checkSnakeTailCollision(snake)) {
-			 // Code to kill
-			std::cout << "Colision" << std::endl;
-		}
-
-		window.updateTextures(snake.getTextures(), snake.getRects());
-		window.updateTexture(apple.getTexture(), apple.getRect());
-
-		window.present();
 	}
 
 	window.quit();
