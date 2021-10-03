@@ -11,13 +11,6 @@ void giveAppleRandPos(Window& window, Snake& snake, Square& apple);
 inline bool checkSnakeAppleCollision(Snake& snake, Square& apple);
 bool checkSnakeTailCollision(Snake& snake);
 
-inline bool checkUpCollision(Snake& snake, Square& s);
-inline bool checkDownCollision(Snake& snake, Square& s);
-inline bool checkLeftCollision(Snake& snake, Square& s);
-inline bool checkRightCollision(Snake& snake, Square& s);
-
-void autoSnake(Snake& snake, Square& apple);
-
 int main(int argv, char* argc[]) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) std::cerr << "SDL_Init has failed to initialize! " << SDL_GetError() << std::endl;
 	Window window("Snake", 500, 500);
@@ -64,13 +57,15 @@ int main(int argv, char* argc[]) {
 					break;
 				case SDLK_EQUALS:
 					delay -= 10;
+					std::cout << "Speed increased" << std::endl;
 					break;
 				case SDLK_MINUS:
 					delay += 10;
+					std::cout << "Speed decreased" << std::endl;
 					break;
 				}
 			default:
-				break;
+				break; 
 			} 
 		}
 
@@ -79,8 +74,6 @@ int main(int argv, char* argc[]) {
 
 			window.clear();
 			window.presentGrid();
-
-			autoSnake(snake, apple);
 		
 			snake.move();
 		
@@ -104,10 +97,7 @@ int main(int argv, char* argc[]) {
 
 			window.present();
 
-			
-				std::cout << "ticks: " << currentTime - lastTime << std::endl;
-				lastTime = currentTime;
-			
+			lastTime = currentTime;
 		}
 	}
 
@@ -158,24 +148,4 @@ bool checkSnakeTailCollision(Snake& snake) {
 	}
 
 	return false;
-}
-
-inline bool checkUpCollision(Snake& snake, Square& s) {
-	return snake.getX() == s.getX() && snake.getY() - snake.getHeight() == s.getY();
-}
-
-inline bool checkDownCollision(Snake& snake, Square& s) {
-	return snake.getX() == s.getX() && snake.getY() + snake.getHeight() == s.getY();
-}
-
-inline bool checkLeftCollision(Snake& snake, Square& s) {
-	return snake.getX() - snake.getWidth() == s.getX() && snake.getY() == s.getY();
-}
-
-inline bool checkRightCollision(Snake& snake, Square& s) {
-	return snake.getX() + snake.getWidth() == s.getX() && snake.getY() == s.getY();
-}
-
-void autoSnake(Snake& snake, Square& apple) {
-
 }

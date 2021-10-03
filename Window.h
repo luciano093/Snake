@@ -8,42 +8,40 @@
 
 class Window {
 public:
-	Window(const char* title, int width, int height);
+	Window(const char* title, short width, short height);
 
 	inline void clear();
 	inline void present();
 	inline void quit();
 
-	void createGrid(int rows, int cols);
+	void createGrid(const short rows, const short cols);
 	inline void presentGrid();
-	inline int getGridSize() { return gridSize; };
+	inline short getGridSize() const { return gridSize; };
 
-	inline int getWidth() { return w; }
-	inline int getHeight() { return h; }
+	inline short getWidth() const { return w; }
+	inline short getHeight() const { return h; }
 
-	inline int getRows() { return rows; }
-	inline int getCols() { return cols; }
+	inline short getRows() const { return rows; }
+	inline short getCols() const { return cols; }
 
 	inline SDL_Renderer* getRenderer() { return renderer; };
 
-	void updateTextures(std::vector<SDL_Texture*> textures, std::vector<SDL_Rect> rects);
-	void updateTexture(SDL_Texture* texture, SDL_Rect rect);
+	void updateTextures(std::vector<SDL_Texture*>& textures, std::vector<SDL_Rect>& rects);
+	void updateTexture(SDL_Texture* texture, SDL_Rect& rect);
 
 private:
-	int w, h;
-	int rows = 0, cols = 0;
+	short w, h;
+	short rows = 0, cols = 0;
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 
 	// Grid
-	int gridSize = 0;
+	short gridSize = 0;
 	SDL_Texture* grid = nullptr;
 	uint32_t* gridBuffer = nullptr;
-
-	bool vsync = true;
 };
 
-Window::Window(const char* title, int width, int height) : w(width), h(height) {
+Window::Window(const char* title, short width, short height) : w(width), h(height) {
 	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_HIDDEN);
 	if (!window) std::cerr << "Failed to create SDL_Window!" << SDL_GetError() << std::endl;
 
@@ -63,9 +61,8 @@ inline void Window::present() {
 }
 
 inline void Window::presentGrid() {
-	if (grid) {
+	if (grid)
 		SDL_RenderCopy(renderer, grid, NULL, NULL);
-	}
 }
 
 inline void Window::quit() {
@@ -74,16 +71,17 @@ inline void Window::quit() {
 	SDL_Quit();
 }
 
-void Window::createGrid(int rows, int cols) {
-	this->rows = rows;
-	this->cols = cols;
+void Window::createGrid(short row_n, short col_n) {
+	rows = row_n;
+	cols = col_n;
 
-	gridSize = h / rows;
+	gridSize = h / rows; // no idea if this might give errors
 
 	grid = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, w, h);
 
-	gridBuffer = new uint32_t[w * h];
+	gridBuffer = new uint32_t[unsigned long long(w) * h];
 
+	// gray color
 	uint32_t r = 110;
 	uint32_t b = 110;
 	uint32_t g = 110;
@@ -116,13 +114,13 @@ void Window::createGrid(int rows, int cols) {
 	SDL_UpdateTexture(grid, NULL, gridBuffer, w * sizeof(uint32_t));
 }
 
-void Window::updateTextures(std::vector<SDL_Texture*> textures, std::vector<SDL_Rect> rects) {
+void Window::updateTextures(std::vector<SDL_Texture*>& textures, std::vector<SDL_Rect>& rects) {
 	for (size_t i = 0; i < textures.size(); ++i) {
 		SDL_RenderCopy(renderer, textures[i], NULL, &rects[i]);
 	}
 }
 
-void Window::updateTexture(SDL_Texture* texture, SDL_Rect rect) {
+void Window::updateTexture(SDL_Texture* texture, SDL_Rect& rect) {
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 

@@ -9,29 +9,29 @@ class Snake {
 public:
 	enum class Directions { UP, DOWN, LEFT, RIGHT, NONE };
 
-	Snake(SDL_Renderer* renderer, int x, int y, int width, int height);
+	Snake(SDL_Renderer* renderer, short x, short y, short width, short height);
 
-	inline std::vector<SDL_Texture*> getTextures();
-	inline std::vector<SDL_Rect> getRects();
+	inline std::vector<SDL_Texture*>& getTextures();
+	inline std::vector<SDL_Rect>& getRects();
 	inline std::vector<Square>& getSquares() { return squares; }
 
-	inline int getX() { return x; }
-	inline int getY() { return y; }
-	inline void setX(int newX);
-	inline void setY(int newY);
+	inline short getX() const { return x; }
+	inline short getY() const { return y; }
+	inline void setX(const short newX);
+	inline void setY(const short newY);
 
-	inline void setSize(int newSize) { squares.resize(1, squares[0]); }
+	inline void setSize(const short newSize) { squares.resize(newSize, squares[0]); }
 
-	inline int getWidth() { return w; }
-	inline int getHeight() { return h; }
+	inline short getWidth() const { return w; }
+	inline short getHeight() const { return h; }
 
 	inline void goLeft();
 	inline void goRight();
 	inline void goUp();
 	inline void goDown();
 
-	inline Directions getDirection() { return direction; }
-	inline size_t getSize() { return squares.size(); }
+	inline Directions getDirection() const { return direction; }
+	inline size_t getSize() const { return squares.size(); }
 	inline Square* getHead() { return &squares[0]; }
 
 	void move();
@@ -40,8 +40,8 @@ public:
 private:
 	Directions direction = Directions::NONE;
 
-	int w, h;
-	int x, y;
+	short w, h;
+	short x, y;
 	
 	std::vector<Square> squares;
 	std::vector<SDL_Texture*> textures;
@@ -49,16 +49,16 @@ private:
 
 	SDL_Renderer* renderer = nullptr;
 
-	void shiftBody();
-
 	uint8_t r = 0, g = 255, b = 0;
+
+	void shiftBody();
 };
 
-Snake::Snake(SDL_Renderer* r, int x, int y, int width, int height) : renderer(r), x(x), y(y), w(width), h(height) {
+Snake::Snake(SDL_Renderer* r, short x, short y, short width, short height) : renderer(r), x(x), y(y), w(width), h(height) {
 	squares.push_back(Square(renderer, x, y, w, h, 0, 255, 0));
 }
 
-inline std::vector<SDL_Texture*> Snake::getTextures() {
+inline std::vector<SDL_Texture*>& Snake::getTextures() {
 	textures.clear();
 	for (auto s = squares.rbegin(); s != squares.rend(); ++s) {
 		textures.push_back(s->getTexture());
@@ -67,7 +67,7 @@ inline std::vector<SDL_Texture*> Snake::getTextures() {
 	return textures;
 }
 
-inline std::vector<SDL_Rect> Snake::getRects() {
+inline std::vector<SDL_Rect>& Snake::getRects() {
 	rects.clear();
 	for (auto s = squares.rbegin(); s != squares.rend(); ++s) {
 	rects.push_back(s->getRect());
@@ -126,7 +126,6 @@ void Snake::move() {
 	}
 }
 
-
 // shifts snake parts to the position of the next part except for the head
 void Snake::shiftBody() {
 	for (auto i = squares.rbegin(); i != squares.rend() - 1; ++i) {
@@ -138,6 +137,7 @@ void Snake::shiftBody() {
 void Snake::grow() {
 	squares.push_back(Square(renderer, squares[squares.size() - 1].getX(), squares[squares.size() - 1].getY(), w, h, r, g, b));
 
+	// pretty colors for snake
 	if (r != 255 && g == 255 && b == 0) r += 5;
 	else if (r == 255 && g <= 255 && g > 0 && b == 0) g -= 5;
 	else if (r == 255 && g == 0 && b != 255) b += 5;
@@ -146,12 +146,12 @@ void Snake::grow() {
 	else if (r == 0 && g == 255 && b <= 255 && b > 0) b -= 5;
 }
 
-inline void Snake::setX(int newX) {
+inline void Snake::setX(short newX) {
 	x = newX;
 	squares[0].setX(x);
 }
 
-inline void Snake::setY(int newY) {
+inline void Snake::setY(short newY) {
 	y = newY;
 	squares[0].setY(y);
 }
