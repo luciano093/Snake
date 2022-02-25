@@ -9,10 +9,10 @@
 class Window {
 public:
 	Window(const char* title, short width, short height);
+	~Window();
 
 	inline void clear();
 	inline void present();
-	inline void quit();
 
 	void createGrid(const short rows, const short cols);
 	inline void presentGrid();
@@ -52,6 +52,12 @@ Window::Window(const char* title, short width, short height) : w(width), h(heigh
 	SDL_ShowWindow(window);
 }
 
+Window::~Window() {
+	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer);
+	SDL_Quit();
+}
+
 inline void Window::clear() {
 	SDL_RenderClear(renderer);
 }
@@ -63,12 +69,6 @@ inline void Window::present() {
 inline void Window::presentGrid() {
 	if (grid)
 		SDL_RenderCopy(renderer, grid, NULL, NULL);
-}
-
-inline void Window::quit() {
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
-	SDL_Quit();
 }
 
 void Window::createGrid(short row_n, short col_n) {
@@ -112,6 +112,8 @@ void Window::createGrid(short row_n, short col_n) {
 	}
 
 	SDL_UpdateTexture(grid, NULL, gridBuffer, w * sizeof(uint32_t));
+
+	delete gridBuffer;
 }
 
 void Window::updateTextures(std::vector<SDL_Texture*>& textures, std::vector<SDL_Rect>& rects) {
