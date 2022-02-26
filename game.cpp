@@ -11,6 +11,7 @@ namespace Game {
 	int delay = 100;
 
 	int collision_number = 0;
+	unsigned int score = 0;
 
 	SDL_Event event;
 
@@ -26,17 +27,17 @@ namespace Game {
 	}
 
 	void update() {
-		handleEvents();
-		window.clear();
-		window.presentGrid();
-
-		if(snake.getDirection() != Snake::Direction::NONE && !isOutOfScreen(grid, snake)) snake.move();
+		// movement
+		if (snake.getDirection() != Snake::Direction::NONE && !isOutOfScreen(grid, snake)) {
+			snake.move();
+		}
 		else if (isOutOfScreen(grid, snake)) {
 			handleOutOfScreen(grid, snake);
 		}
 		
-		// when snake collides with apple
+		// check snake collision with food
 		if (snake.hasEatenFood()) {
+			std::cout << "score: " << ++score << std::endl;
 			snake.grow();
 			giveAppleRandPos(window, snake, apple);
 		}
@@ -45,12 +46,11 @@ namespace Game {
 		if (snake.getSize() > 3 && checkSnakeTailCollision(snake)) {
 			// Code to kill
 			snake.setSize(1);
+			score = 0;
 		}
 
 		window.updateTextures(snake.getTextures(), snake.getRects());
 		window.updateTexture(apple.getTexture(), apple.getRect());
-
-		window.present();
 	}
 
 	void handleEvents() {
@@ -151,7 +151,7 @@ namespace Game {
 
 		for (Entity& s : snake.getSquares()) {
 			if (&s == head) continue;
-			else if (s == *head) {
+			else if (head->getX() == s.getX() && head->getY() == s.getY()) {
 				return true;
 			}
 		}

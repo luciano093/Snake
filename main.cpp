@@ -15,7 +15,12 @@ int main(int argc, char* argv[]) {
 		currentTime = SDL_GetTicks();
 
 		if (currentTime > lastTime + Game::delay) {
+			Game::handleEvents();
+			Game::window.clear();
+			Game::window.presentGrid();
 			Game::update();
+			Game::window.present();
+
 			lastTime = currentTime;
 		}
 	}

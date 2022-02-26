@@ -9,6 +9,8 @@
 #include"Entity.h"
 
 namespace Game {
+	extern Window window;
+
 	extern bool running;
 	extern int delay;
 

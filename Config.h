@@ -1,6 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-constexpr unsigned int GRID_SIZE = 10;
+constexpr unsigned int GRID_SIZE = 20;
 
 #endif
