@@ -25,7 +25,7 @@ void Window::createGrid(short row_n, short col_n) {
 
 	grid = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, w, h);
 
-	gridBuffer = new uint32_t[unsigned long long(w) * h];
+	uint32_t* gridBuffer = new uint32_t[uint64_t(w) * h];
 
 	// gray color
 	uint32_t r = 110;
@@ -59,7 +59,7 @@ void Window::createGrid(short row_n, short col_n) {
 
 	SDL_UpdateTexture(grid, NULL, gridBuffer, w * sizeof(uint32_t));
 
-	delete gridBuffer;
+	delete[] gridBuffer;
 }
 
 void Window::updateTextures(std::vector<SDL_Texture*>& textures, std::vector<SDL_Rect>& rects) {

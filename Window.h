@@ -38,7 +38,6 @@ private:
 	// Grid
 	short gridSize = 0;
 	SDL_Texture* grid = nullptr;
-	uint32_t* gridBuffer = nullptr;
 };
 
 inline void Window::clear() {

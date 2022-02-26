@@ -19,7 +19,6 @@ namespace Game {
 	extern bool isOutOfScreen(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid, Snake& snake);
 	extern void handleOutOfScreen(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid, Snake& snake);
 	extern void giveAppleRandPos(Window& window, Snake& snake, Entity& apple);
-	extern inline bool checkSnakeAppleCollision(Snake& snake, Entity& apple);
 	extern bool checkSnakeTailCollision(Snake& snake);
 
 	void populateGrid(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid);

@@ -12,9 +12,6 @@ public:
 	Square();
 	Square(SDL_Renderer* renderer, short x, short y, short w, short h, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0);
 
-	inline bool operator==(const Square& other);
-	Square& operator =(const Square& other);
-
 	SDL_Texture* getTexture() { return texture; };
 	SDL_Rect& getRect() { return rect; }
 
@@ -32,16 +29,8 @@ private:
 	SDL_Renderer* renderer = nullptr;
 	SDL_Texture* texture = nullptr;
 	SDL_Rect rect;
-	uint32_t* buffer = nullptr;
 
 	short x, y;
 	short w, h;
 };
-
-inline bool Square::operator==(const Square& other) {
-	if (this == &other) return true;
-
-	return x == other.x && y == other.y && w == other.w && h == other.h;
-}
-
 #endif

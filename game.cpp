@@ -36,7 +36,7 @@ namespace Game {
 		}
 		
 		// when snake collides with apple
-		if (checkSnakeAppleCollision(snake, apple)) {
+		if (snake.hasEatenFood()) {
 			snake.grow();
 			giveAppleRandPos(window, snake, apple);
 		}
@@ -44,7 +44,6 @@ namespace Game {
 		// collision with tail
 		if (snake.getSize() > 3 && checkSnakeTailCollision(snake)) {
 			// Code to kill
-			std::cout << "Collision: " << ++collision_number << std::endl;
 			snake.setSize(1);
 		}
 
@@ -145,10 +144,6 @@ namespace Game {
 			}
 			if (!unpassed) break;
 		} while (true);
-	}
-
-	inline bool checkSnakeAppleCollision(Snake& snake, Entity& apple) {
-		return snake.getX() == apple.getX() && snake.getY() == apple.getY();
 	}
 
 	bool checkSnakeTailCollision(Snake& snake) {

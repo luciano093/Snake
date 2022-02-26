@@ -27,8 +27,7 @@ Snake& Snake::operator =(const Snake& other) {
 }
 
 void Snake::setX(short newX) {
-	if ((*grid)[y][newX] == EntityType::FOOD) std::cout << "Food eaten!" << std::endl;
-
+	if ((*grid)[y][newX] == EntityType::FOOD) eatFood();
 	(*grid)[y][newX] = EntityType::ENTITY;
 
 	x = newX;
@@ -36,8 +35,7 @@ void Snake::setX(short newX) {
 }
 
 void Snake::setY(short newY) {
-	if ((*grid)[newY][x] == EntityType::FOOD) std::cout << "Food eaten!" << std::endl;
-
+	if((*grid)[newY][x] == EntityType::FOOD) eatFood();
 	(*grid)[newY][x] = EntityType::ENTITY;
 
 	y = newY;
@@ -86,7 +84,7 @@ void Snake::shiftBody() {
 }
 
 void Snake::grow() {
-	squares.push_back(Entity(renderer, grid, squares[squares.size() - 1].getX(), squares[squares.size() - 1].getY(), w, h, EntityType::ENTITY, r, g, b));
+	squares.emplace_back(Entity(renderer, grid, squares[squares.size() - 1].getX(), squares[squares.size() - 1].getY(), w, h, EntityType::ENTITY, r, g, b));
 
 	// pretty colors for snake
 	if (r != 255 && g == 255 && b == 0) r += 5;
@@ -95,4 +93,19 @@ void Snake::grow() {
 	else if (r <= 255 && r > 0 && g == 0 && b == 255) r -= 5;
 	else if (r == 0 && g != 255 && b == 255) g += 5;
 	else if (r == 0 && g == 255 && b <= 255 && b > 0) b -= 5;
+}
+
+void Snake::setSize(const short& newSize) {
+	squares.resize(newSize);
+}
+
+void Snake::eatFood() {
+	foodEaten = true;
+}
+
+bool Snake::hasEatenFood() {
+	if (!foodEaten) return false;
+
+	foodEaten = false;
+	return true;
 }

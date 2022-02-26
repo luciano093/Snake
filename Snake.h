@@ -3,6 +3,7 @@
 
 #include<SDL.h>
 #include<vector>
+#include<deque>
 #include<array>
 #include<iostream>
 #include"Square.h"
@@ -20,9 +21,9 @@ public:
 
 	inline std::vector<SDL_Texture*>& getTextures();
 	inline std::vector<SDL_Rect>& getRects();
-	std::vector<Entity>& getSquares() { return squares; }
+	std::deque<Entity>& getSquares() { return squares; }
 
-	void setSize(const short newSize) { squares.resize(newSize, squares[0]); }
+	void setSize(const short& newSize);
 
 	short getX() const { return x; }
 	short getY() const { return y; }
@@ -44,25 +45,29 @@ public:
 	void moveTo(unsigned int x, unsigned int y);
 	void grow();
 
+	bool hasEatenFood();
+
 private:
-	std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid;
-
 	Direction direction = Direction::NONE;
-
-	short x, y;
-	short w, h;
 	
-	std::vector<Entity> squares;
+	std::deque<Entity> squares;
 	std::vector<SDL_Texture*> textures;
 	std::vector<SDL_Rect> rects;
 
 	SDL_Renderer* renderer = nullptr;
+	std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid = nullptr;
 
 	uint8_t r = 0, g = 255, b = 0;
+
+	short x, y;
+	short w, h;
 
 	void shiftBody();
 	void setX(short x);
 	void setY(short y);
+
+	void eatFood();
+	bool foodEaten = false;
 };
 
 inline std::vector<SDL_Texture*>& Snake::getTextures() {
