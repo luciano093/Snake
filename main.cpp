@@ -1,27 +1,21 @@
-#pragma warning(push, 0)
 #include<SDL.h>
-#pragma warning(pop)
-
 #include<iostream>
 #include<ctime>
 #include"Game.h"
 
-int main(int argv, char* argc[]) {
+int main(int argc, char* argv[]) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) std::cerr << "SDL_Init has failed to initialize! " << SDL_GetError() << std::endl;
 	
 	unsigned lastTime = 0;
 	unsigned currentTime;
 
-	Main::running = true;
-	Main::delay = 100;
+	Game::start();
 
-	start();
-
-	while (Main::running) {
+	while (Game::running) {
 		currentTime = SDL_GetTicks();
 
-		if (currentTime > lastTime + Main::delay) {
-			update();
+		if (currentTime > lastTime + Game::delay) {
+			Game::update();
 			lastTime = currentTime;
 		}
 	}

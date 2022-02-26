@@ -19,3 +19,17 @@ Square::Square(SDL_Renderer* rend, short x, short y, short w, short h, uint8_t r
 
 	delete buffer;
 }
+
+Square& Square::operator =(const Square& other) {
+	if (this == &other) return *this;
+
+	renderer = other.renderer;
+	texture = other.texture;
+	rect = other.rect;
+	x = other.x;
+	y = other.y;
+	w = other.w;
+	h = other.h;
+
+	return *this;
+}

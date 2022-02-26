@@ -3,45 +3,56 @@
 
 #include<SDL.h>
 #include<vector>
+#include<array>
+#include<iostream>
 #include"Square.h"
+#include"Config.h"
+#include"Entity.h"
 
 class Snake {
 public:
-	short x, y;
-
-	enum class Directions { UP, DOWN, LEFT, RIGHT, NONE };
+	enum class Direction { UP, DOWN, LEFT, RIGHT, NONE };
 
 	Snake() = default;
-	Snake(SDL_Renderer* renderer, short x, short y, short width, short height);
+	Snake(SDL_Renderer* renderer, std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid, short x, short y, short width, short height);
+
+	Snake& operator =(const Snake& other);
 
 	inline std::vector<SDL_Texture*>& getTextures();
 	inline std::vector<SDL_Rect>& getRects();
-	inline std::vector<Square>& getSquares() { return squares; }
+	std::vector<Entity>& getSquares() { return squares; }
 
 	void setSize(const short newSize) { squares.resize(newSize, squares[0]); }
+
+	short getX() const { return x; }
+	short getY() const { return y; }
 
 	short getWidth() const { return w; }
 	short getHeight() const { return h; }
 
-	void goLeft() { direction = Directions::LEFT; };
-	void goRight() { direction = Directions::RIGHT; };
-	void goUp() { direction = Directions::UP; };
-	void goDown() { direction = Directions::DOWN; };
+	void goLeft() { direction = Direction::LEFT; };
+	void goRight() { direction = Direction::RIGHT; };
+	void goUp() { direction = Direction::UP; };
+	void goDown() { direction = Direction::DOWN; };
 
-	Directions getDirection() const { return direction; }
+	Direction getDirection() const { return direction; }
 	size_t getSize() const { return squares.size(); }
-	Square* getHead() { return &squares[0]; }
-	Square* getTail() { return &squares[squares.size() - 1]; }
+	Entity* getHead() { return &squares[0]; }
+	Entity* getTail() { return &squares[squares.size() - 1]; }
 
 	void move();
+	void moveTo(unsigned int x, unsigned int y);
 	void grow();
 
 private:
-	Directions direction = Directions::NONE;
+	std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid;
 
+	Direction direction = Direction::NONE;
+
+	short x, y;
 	short w, h;
 	
-	std::vector<Square> squares;
+	std::vector<Entity> squares;
 	std::vector<SDL_Texture*> textures;
 	std::vector<SDL_Rect> rects;
 
@@ -50,6 +61,8 @@ private:
 	uint8_t r = 0, g = 255, b = 0;
 
 	void shiftBody();
+	void setX(short x);
+	void setY(short y);
 };
 
 inline std::vector<SDL_Texture*>& Snake::getTextures() {
