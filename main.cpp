@@ -1,7 +1,9 @@
 #include<SDL.h>
 #include<iostream>
 #include<ctime>
+#include"Config.h"
 #include"Game.h"
+#include"Layers/Layer.h"
 
 int main(int argc, char* argv[]) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) std::cerr << "SDL_Init has failed to initialize! " << SDL_GetError() << std::endl;
@@ -9,6 +11,8 @@ int main(int argc, char* argv[]) {
 	unsigned lastTime = 0;
 	unsigned currentTime;
 
+	int i = GRID_SIZE;
+	std::cout << i << std::endl;
 	Game::start();
 
 	while (Game::running) {

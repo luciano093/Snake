@@ -2,7 +2,6 @@
 #define ENTITY_H
 
 #include<SDL.h>
-#include<array>
 #include"Square.h"
 #include"Config.h"
 #include"EntityType.h"
@@ -12,7 +11,7 @@ public:
 	Entity() = default;
 	Entity(const Entity& other);
 	Entity(Entity&& other) noexcept;
-	Entity(SDL_Renderer* renderer, std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid, int xCoord, int yCoord, int width, int height, EntityType type, int r, int g, int b);
+	Entity(SDL_Renderer* renderer, array2d* grid, int xCoord, int yCoord, int width, int height, EntityType type, int r, int g, int b);
 
 	bool operator==(const Entity& other);
 	Entity& operator=(const Entity& other);
@@ -29,7 +28,7 @@ public:
 
 private:
 	SDL_Renderer* renderer = nullptr;
-	std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid = nullptr;
+	array2d* grid = nullptr;
 	Square square;
 
 	EntityType type = EntityType::ENTITY;

@@ -7,7 +7,6 @@
 #include<array>
 #include<iostream>
 #include"Square.h"
-#include"Config.h"
 #include"Entity.h"
 
 class Snake {
@@ -15,7 +14,7 @@ public:
 	enum class Direction { UP, DOWN, LEFT, RIGHT, NONE };
 
 	Snake() = default;
-	Snake(SDL_Renderer* renderer, std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid, short x, short y, short width, short height);
+	Snake(SDL_Renderer* renderer, array2d* grid, short x, short y, short width, short height);
 
 	Snake& operator =(const Snake& other);
 
@@ -27,6 +26,8 @@ public:
 
 	short getX() const { return x; }
 	short getY() const { return y; }
+	void setX(short x);
+	void setY(short y);
 
 	short getWidth() const { return w; }
 	short getHeight() const { return h; }
@@ -55,7 +56,7 @@ private:
 	std::vector<SDL_Rect> rects;
 
 	SDL_Renderer* renderer = nullptr;
-	std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid = nullptr;
+	array2d* grid = nullptr;
 
 	uint8_t r = 0, g = 255, b = 0;
 
@@ -63,8 +64,6 @@ private:
 	short w, h;
 
 	void shiftBody();
-	void setX(short x);
-	void setY(short y);
 
 	void eatFood();
 	bool foodEaten = false;

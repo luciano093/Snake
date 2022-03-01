@@ -5,7 +5,7 @@ namespace Game {
 	Snake snake;
 	Entity apple;
 
-	std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE> grid;
+	array2d grid;
 
 	bool running = true;
 	int delay = 100;
@@ -15,6 +15,24 @@ namespace Game {
 
 	SDL_Event event;
 
+	Layer hiddenLayer;
+	Layer output;
+	vector2d predicted;
+
+	SDL_Event left, right, up, down;
+	int maxSteps = 50;
+	int currentMaxSteps = maxSteps;
+	int currentSteps = 0;
+	int totalSteps = 0;
+
+	int maxSnakesPerGen = 500;
+	int currentSnakes = 1;
+
+	vector2d input;
+	vector2d hloutput;
+
+	int gen = 1;
+
 	void start() {
 		window.createGrid(GRID_SIZE, GRID_SIZE);
 
@@ -23,30 +41,82 @@ namespace Game {
 		snake = Snake(window.getRenderer(), &grid, GRID_SIZE/2, GRID_SIZE/2, window.getGridSize(), window.getGridSize());
 		apple = Entity(window.getRenderer(), &grid, GRID_SIZE - 1, GRID_SIZE - 1, window.getGridSize(), window.getGridSize(), EntityType::FOOD, 255, 0, 0);
 
+		input = { {(double)snake.getDirection(), (double)snake.getX(), (double)snake.getY(), (double)apple.getX(), (double)apple.getY()} };
+
+		hiddenLayer = Layer(5, 7);
+		hloutput = activationReLu(hiddenLayer.forward(input));
+
+		output = Layer(7, 4);
+		predicted = activationSoftmax(output.forward(hloutput));
+
+		right.type = SDL_KEYDOWN;
+		right.key.keysym.sym = SDLK_RIGHT;
+
+		left.type = SDL_KEYDOWN;
+		left.key.keysym.sym = SDLK_LEFT;
+
+		up.type = SDL_KEYDOWN;
+		up.key.keysym.sym = SDLK_UP;
+
+		down.type = SDL_KEYDOWN;
+		down.key.keysym.sym = SDLK_DOWN;
+
 		grid[apple.getY()][apple.getX()] = apple.getEntityType();
 	}
 
 	void update() {
+		if (currentSnakes >= maxSnakesPerGen) {
+			currentSnakes = 0;
+
+			Ai::adjustLayers(hiddenLayer, output);
+			std::cout << "generation: " << ++gen << " best fitness: " << Ai::bestFitness << "\n";
+		}
+		else {
+			hiddenLayer.adjustWeights();
+			hiddenLayer.adjustBiases();
+			output.adjustWeights();
+			output.adjustBiases();
+		}
+
+		++currentSteps;
+		++totalSteps;
+
+		input = { {(double)snake.getDirection(), (double)snake.getX(), (double)snake.getY(), (double)apple.getX(), (double)apple.getY()} };
+		hloutput = activationReLu(hiddenLayer.forward(input));
+		predicted = activationSoftmax(output.forward(hloutput));
+
+		if (predicted[0][0] >= predicted[0][1] && predicted[0][0] >= predicted[0][2] && predicted[0][0] >= predicted[0][3]) {
+			SDL_PushEvent(&left);
+		}
+		else if (predicted[0][1] >= predicted[0][0] && predicted[0][1] >= predicted[0][2] && predicted[0][1] >= predicted[0][3]) {
+			SDL_PushEvent(&right);
+		}
+		else if (predicted[0][2] >= predicted[0][0] && predicted[0][2] >= predicted[0][1] && predicted[0][2] >= predicted[0][3]) {
+			SDL_PushEvent(&up);
+		}
+		else if (predicted[0][3] >= predicted[0][0] && predicted[0][3] >= predicted[0][1] && predicted[0][3] >= predicted[0][2]) {
+			SDL_PushEvent(&down);
+		}
+
 		// movement
 		if (snake.getDirection() != Snake::Direction::NONE && !isOutOfScreen(grid, snake)) {
 			snake.move();
 		}
 		else if (isOutOfScreen(grid, snake)) {
-			handleOutOfScreen(grid, snake);
+			handleSnakeDeath();
 		}
 		
 		// check snake collision with food
 		if (snake.hasEatenFood()) {
+			maxSteps += maxSteps;
 			std::cout << "score: " << ++score << std::endl;
 			snake.grow();
 			giveAppleRandPos(window, snake, apple);
 		}
 
 		// collision with tail
-		if (snake.getSize() > 3 && checkSnakeTailCollision(snake)) {
-			// Code to kill
-			snake.setSize(1);
-			score = 0;
+		if ((snake.getSize() > 3 && checkSnakeTailCollision(snake)) || currentSteps >= maxSteps) {
+			handleSnakeDeath();
 		}
 
 		window.updateTextures(snake.getTextures(), snake.getRects());
@@ -90,7 +160,7 @@ namespace Game {
 		}
 	}
 
-	bool isOutOfScreen(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid, Snake& snake) {
+	bool isOutOfScreen(array2d& grid, Snake& snake) {
 		switch (snake.getDirection()) {
 		case Snake::Direction::LEFT:
 			if (snake.getX() <= 0) return true;
@@ -109,7 +179,7 @@ namespace Game {
 		return false;
 	}
 
-	void handleOutOfScreen(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid, Snake& snake) {
+	void handleOutOfScreen(array2d& grid, Snake& snake) {
 		switch (snake.getDirection()) {
 		case Snake::Direction::LEFT:
 			snake.moveTo(grid.size() - 1, snake.getY());
@@ -159,11 +229,24 @@ namespace Game {
 		return false;
 	}
 
-	void populateGrid(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid) {
+	void populateGrid(array2d& grid) {
 		for (int i = 0; i < GRID_SIZE; ++i) {
 			for (int j = 0; j < GRID_SIZE; ++j) {
 				grid[i][j] = EntityType::NULL_ENTITY;
 			}
 		}
+	}
+
+	void handleSnakeDeath() {
+		maxSteps = currentMaxSteps;
+		++currentSnakes;
+		Ai::snakes.push_back({ {hiddenLayer, output}, Ai::calcFitness(currentSteps, score) });
+
+		// Code to kill
+		snake.setSize(1);
+		snake.setX(GRID_SIZE / 2);
+		snake.setY(GRID_SIZE / 2);
+		currentSteps = 0;
+		score = 0;
 	}
 }

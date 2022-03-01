@@ -7,6 +7,8 @@
 #include"Window.h"
 #include"Config.h"
 #include"Entity.h"
+#include"Layers/Layer.h"
+#include"Ai.h"
 
 namespace Game {
 	extern Window window;
@@ -18,12 +20,13 @@ namespace Game {
 	extern void update();
 	extern void handleEvents();
 
-	extern bool isOutOfScreen(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid, Snake& snake);
-	extern void handleOutOfScreen(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid, Snake& snake);
+	extern bool isOutOfScreen(array2d& grid, Snake& snake);
+	extern void handleOutOfScreen(array2d& grid, Snake& snake);
 	extern void giveAppleRandPos(Window& window, Snake& snake, Entity& apple);
 	extern bool checkSnakeTailCollision(Snake& snake);
 
-	void populateGrid(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid);
+	extern void handleSnakeDeath();
+	extern void populateGrid(std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>& grid);
 }
 
 #endif

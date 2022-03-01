@@ -7,7 +7,7 @@ Entity::Entity(Entity&& other) noexcept
 	: renderer(std::move(other.renderer)), grid(std::move(other.grid)), square(std::move(other.square)), type(std::move(other.type)),
 	x(std::exchange(other.x, 0)), y(std::exchange(other.y, 0)), w(std::exchange(other.w, 0)), h(std::exchange(other.h, 0)) { }
 
-Entity::Entity(SDL_Renderer* renderer, std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid, int xCoord, int yCoord, int width, int height, EntityType type, int r, int g, int b) : renderer(renderer), grid(grid), x(xCoord), y(yCoord), w(width), h(height), type(type) {
+Entity::Entity(SDL_Renderer* renderer, array2d* grid, int xCoord, int yCoord, int width, int height, EntityType type, int r, int g, int b) : renderer(renderer), grid(grid), x(xCoord), y(yCoord), w(width), h(height), type(type) {
 	square = Square(renderer, x * w, y * h, w, h, r, g, b);
 	(*grid)[y][x] = type;
 }

@@ -1,6 +1,6 @@
 #include"Snake.h"
 
-Snake::Snake(SDL_Renderer* r, std::array<std::array<EntityType, GRID_SIZE>, GRID_SIZE>* grid, short x, short y, short width, short height) : renderer(r), grid(grid), x(x), y(y), w(width), h(height) {
+Snake::Snake(SDL_Renderer* r, array2d* grid, short x, short y, short width, short height) : renderer(r), grid(grid), x(x), y(y), w(width), h(height) {
 	squares.push_back(Entity(renderer, grid, x, y, w, h, EntityType::ENTITY, 0, 255, 0));
 
 	(*grid)[y][x] = EntityType::ENTITY;
