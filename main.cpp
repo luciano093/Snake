@@ -1,12 +1,13 @@
 #include<SDL.h>
 #include<iostream>
 #include"Window.h"
+#include"Square.h"
 
 namespace Game {
 	constexpr int GRID_SIZE = 10;
 
-	void handleEvents(const SDL_Event& evt) {
-		 
+	void handleEvents(const SDL_Keycode& key) {
+
 	}
 }
 
@@ -15,10 +16,10 @@ namespace Main {
 }
 
 int main(int argc, char* argv[]) {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) std::cerr << "SDL has failed to initialize video " << SDL_GetError() << std::endl;
-
 	Window window("Snake", 500, 500);
 	window.createGrid(Game::GRID_SIZE, Game::GRID_SIZE);
+
+	Square s(window.getRenderer(), Game::GRID_SIZE / 2 * window.getGridSize(), Game::GRID_SIZE / 2 * window.getGridSize(), window.getGridSize(), window.getGridSize(), 255, 0, 0);
 
 	SDL_Event evt;
 	bool running = true;
@@ -26,13 +27,12 @@ int main(int argc, char* argv[]) {
 	while (running) {
 		while (SDL_PollEvent(&evt)) {
 			if (evt.type == SDL_QUIT) running = false;
-			Game::handleEvents(evt);
+			if (evt.type == SDL_KEYDOWN) Game::handleEvents(evt.key.keysym.sym);
 		}
 
 		window.clear();
-		window.presentGrid();
 
-
+		window.updateTexture(s.getTexture(), s.getRect());
 
 		window.present();
 	}

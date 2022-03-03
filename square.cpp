@@ -4,7 +4,7 @@ Square::Square() : x(0), y(0), w(0), h(0), rect(SDL_Rect{0, 0, 0, 0}) {
 
 }
 
-Square::Square(SDL_Renderer* rend, short x, short y, short w, short h, uint8_t r, uint8_t g, uint8_t b) : renderer(rend), x(x), y(y), w(w), h(h) {
+Square::Square(SDL_Renderer* const rend, const int x, const int y, const int w, const int h, const uint8_t r, const uint8_t g, const uint8_t b) : renderer(rend), x(x), y(y), w(w), h(h) {
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, w, h);
 
 	uint32_t* buffer = new uint32_t[uint64_t(w) * h];
