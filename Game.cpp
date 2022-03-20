@@ -21,11 +21,13 @@ namespace Game {
 	}
 
 	void start() {
+		Main::window.changeBackgroundColor(SDL_Color{196, 196, 196});
+
 		int snakeInitialPos = GRID_SIZE * Main::window.getGridSize() / 2;
 		int appleInitialPos = Main::window.getGridSize() * 3;
 
 		snake = new Snake(snakeInitialPos, snakeInitialPos, Main::window.getGridSize(), Main::window.getGridSize());
-		apple = new Square(Main::window.getRenderer(), appleInitialPos, appleInitialPos, Main::window.getGridSize(), Main::window.getGridSize(), SDL_Color{255, 0, 0});
+		apple = new Square(Main::window.getRenderer(), appleInitialPos, appleInitialPos, Main::window.getGridSize(), Main::window.getGridSize(), SDL_Color{252, 61, 61});
 	}
 
 	void update() {
@@ -45,10 +47,10 @@ namespace Game {
 		}
 
 		for (const Square* square : snake->getParts()) {
-			Main::window.updateTexture(square->getTexture(), square->getRect());
+			Main::window.drawTexture(square->getTexture(), square->getRect());
 		}
 
-		Main::window.updateTexture(apple->getTexture(), apple->getRect());
+		Main::window.drawTexture(apple->getTexture(), apple->getRect());
 	}
 
 	bool isSnakeOnScreen() {

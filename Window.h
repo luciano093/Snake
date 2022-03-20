@@ -14,8 +14,7 @@ public:
 	inline void clear();
 	inline void present();
 
-	void presentGrid() { SDL_RenderCopy(renderer, grid, NULL, NULL); };
-	void presentBackground() { SDL_RenderCopy(renderer, background, NULL, NULL); };
+	void changeBackgroundColor(const SDL_Color& color);
 
 	void createGrid(const int& row_n, const int& col_n);
 
@@ -29,8 +28,8 @@ public:
 
 	SDL_Renderer* getRenderer() { return renderer; };
 
-	void updateTextures(const std::vector<SDL_Texture*>& textures, const std::vector<SDL_Rect>& rects);
-	void updateTexture(SDL_Texture* const texture, const SDL_Rect& rect);
+	void drawTextures(const std::vector<SDL_Texture*>& textures, const std::vector<SDL_Rect>& rects);
+	void drawTexture(SDL_Texture* const texture, const SDL_Rect& rect);
 
 private:
 	unsigned int w, h;
@@ -42,15 +41,20 @@ private:
 	int gridSize = 0;
 	SDL_Texture* grid = nullptr;
 	SDL_Texture* background = nullptr;
+
+	void createBackground();
+
+	void presentGrid() { SDL_RenderCopy(renderer, grid, NULL, NULL); };
+	void presentBackground() { SDL_RenderCopy(renderer, background, NULL, NULL); };
 };
 
 inline void Window::clear() {
 	SDL_RenderClear(renderer);
 	presentBackground();
-	if (grid) presentGrid();
 }
 
 inline void Window::present() {
+	if (grid) presentGrid();
 	SDL_RenderPresent(renderer);
 }
 
