@@ -15,6 +15,8 @@ Window::Window(const char* title, int width, int height) : w(width), h(height) {
 
 Window::~Window() {
 	SDL_DestroyWindow(window);
+	SDL_DestroyTexture(grid);
+	SDL_DestroyTexture(background);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 }
@@ -26,8 +28,8 @@ void Window::createGrid(const int& row_n, const int& col_n) {
 	gridSize = h / rows; // no idea if this might give errors
 
 	grid = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STATIC, w, h);
-
-	uint32_t* gridBuffer = new uint32_t[uint32_t(w) * h];
+	
+	uint32_t* gridBuffer = new uint32_t[uint64_t(w) * h];
 
 	// gray color
 	uint8_t r = 110;

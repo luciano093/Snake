@@ -10,10 +10,12 @@
 class Square {
 public:
 	Square();
-	Square(SDL_Renderer* renderer, const int x, const int y, const int w, const int h, const uint8_t r = 0, const uint8_t g = 0, const uint8_t b = 0);
+	Square(SDL_Renderer* renderer, const int x, const int y, const int w, const int h, const SDL_Color color);
 
-	SDL_Texture* const getTexture() { return texture; };
-	SDL_Rect& getRect() { return rect; }
+	~Square();
+
+	SDL_Texture* const getTexture() const { return texture; };
+	const SDL_Rect& getRect() const { return rect; }
 
 	int const getX() const { return x; };
 	int const getY() const { return y; };
@@ -26,7 +28,6 @@ public:
 	void setY(const int newY) { y = newY; rect.y = newY; };
 
 private:
-	SDL_Renderer* renderer = nullptr;
 	SDL_Texture* texture = nullptr;
 	SDL_Rect rect;
 

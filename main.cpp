@@ -1,40 +1,46 @@
 #include<SDL.h>
 #include<iostream>
-#include"Window.h"
 #include"Square.h"
+#include"Game.h"
+#include"Config.h"
+#include"Main.h"
 
-namespace Game {
-	constexpr int GRID_SIZE = 10;
+Window Main::window("Snake", 500, 500);
 
-	void handleEvents(const SDL_Keycode& key) {
-
-	}
-}
-
-namespace Main {
-
-}
+unsigned lastTime = 0;
+unsigned currentTime;
+int delay = 90;
 
 int main(int argc, char* argv[]) {
-	Window window("Snake", 500, 500);
-	window.createGrid(Game::GRID_SIZE, Game::GRID_SIZE);
-
-	Square s(window.getRenderer(), Game::GRID_SIZE / 2 * window.getGridSize(), Game::GRID_SIZE / 2 * window.getGridSize(), window.getGridSize(), window.getGridSize(), 255, 0, 0);
+	
+	Main::window.createGrid(GRID_SIZE, GRID_SIZE);
 
 	SDL_Event evt;
 	bool running = true;
 
+	Game::start();
+
 	while (running) {
-		while (SDL_PollEvent(&evt)) {
-			if (evt.type == SDL_QUIT) running = false;
-			if (evt.type == SDL_KEYDOWN) Game::handleEvents(evt.key.keysym.sym);
+		currentTime = SDL_GetTicks();
+
+		if (currentTime > lastTime + delay) {
+			while (SDL_PollEvent(&evt)) {
+				if (evt.type == SDL_QUIT) running = false;
+				if (evt.type == SDL_KEYDOWN) {
+					if (evt.key.keysym.sym == SDLK_EQUALS) delay -= 10;
+					else if(evt.key.keysym.sym == SDLK_MINUS) delay += 10;
+					else Game::handleEvents(evt.key.keysym.sym);
+				}
+			}
+
+			Main::window.clear();
+
+			Game::update();
+
+			Main::window.present();
+
+			lastTime = currentTime;
 		}
-
-		window.clear();
-
-		window.updateTexture(s.getTexture(), s.getRect());
-
-		window.present();
 	}
 
 	return 0;

@@ -14,8 +14,8 @@ public:
 	inline void clear();
 	inline void present();
 
-	void presentGrid() { if (grid) SDL_RenderCopy(renderer, background, NULL, NULL); };
-	void presentBackground() { SDL_RenderCopy(renderer, grid, NULL, NULL); };
+	void presentGrid() { SDL_RenderCopy(renderer, grid, NULL, NULL); };
+	void presentBackground() { SDL_RenderCopy(renderer, background, NULL, NULL); };
 
 	void createGrid(const int& row_n, const int& col_n);
 
@@ -47,11 +47,11 @@ private:
 inline void Window::clear() {
 	SDL_RenderClear(renderer);
 	presentBackground();
+	if (grid) presentGrid();
 }
 
 inline void Window::present() {
 	SDL_RenderPresent(renderer);
-	if (grid) presentGrid();
 }
 
 #endif
